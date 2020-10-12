@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/joho/godotenv"
+	"os"
 )
 
 
@@ -26,9 +28,8 @@ func connect(clientID string, uri *url.URL) mqtt.Client {
 }
 
 func createClientOptions(clientID string, uri *url.URL) *mqtt.ClientOptions {
-	opts := mqtt.NewClientOptions()
-	uri.Path = "ec2-18-228-38-211.sa-east-1.compute.amazonaws.com:1883"
-	opts.AddBroker(fmt.Sprintf("tcp://%s", uri.Path))
+	opts := mqtt.NewClientOptions() 
+	opts.AddBroker(fmt.Sprintf("tcp://%s", os.Getenv("AWS_PATH")))
 	opts.SetUsername(uri.User.Username())
 	password, _ := uri.User.Password()
 	opts.SetPassword(password)
@@ -49,8 +50,12 @@ func listen(uri *url.URL, topic string, c chan string) {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Something is wrong with .env file")
+	}
 
-	uri, err := url.Parse("mqtt://admin:hivemq@http://ec2-18-228-38-211.sa-east-1.compute.amazonaws.com:1883")
+	uri, err := url.Parse(os.Getenv("RAW_URL"))
 
 	if err != nil {
 		log.Fatal(err)
