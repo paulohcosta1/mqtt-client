@@ -18,12 +18,14 @@ func publish(topic, data string) {
 }
 
 func listen(topic string) {
-	// client := connect("sub")
-	setTopic("teste", "teste")
+	client := connect("sub")
 
-	// client.Subscribe(topic, 0, func(client mqtt.Client, msg mqtt.Message) {
+	client.Subscribe(topic, 0, func(client mqtt.Client, msg mqtt.Message) {
+		addTopic(msg.Topic(), string(msg.Payload()))
 
-	// })
+		fmt.Printf("* [%s] %s\n", msg.Topic(), string(msg.Payload()))
+
+	})
 
 }
 

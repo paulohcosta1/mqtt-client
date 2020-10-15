@@ -4,28 +4,40 @@ import (
 	"context"
 	"log"
 
+	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go"
-	"firebase.google.com/go/db"
+	"google.golang.org/api/option"
 )
 
-var client *db.Client
+var client *firestore.Client
 
 func init() {
+
+	opt := option.WithCredentialsFile("serviceAccountKey.json")
 	ctx := context.Background()
-	conf := &firebase.Config{
-		DatabaseURL: "https://mqtt-client-af8e1.firebaseio.com/",
-	}
-	app, err := firebase.NewApp(ctx, conf)
+
+	app, err := firebase.NewApp(ctx, nil, opt)
+
 	if err != nil {
 		log.Fatalf("firebase.NewApp: %v", err)
 	}
-	client, err = app.Database(ctx)
+	client, err = app.Firestore(ctx)
+
 	if err != nil {
 		log.Fatalf("app.Firestore: %v", err)
 	}
+
 }
 
-func setTopic(topic, msg string) {
-	client.NewRef(topic).Child(msg)
+func addTopic(topic, payload string) {
+	ctx := context.Background()
+
+	_, _, err := client.Collection(topic).Add(ctx, map[string]interface{}{
+		"payload": payload,
+	})
+
+	if err != nil {
+		log.Fatalf("Failed adding topic: %v", err)
+	}
 
 }
