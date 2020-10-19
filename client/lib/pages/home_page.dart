@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:client/pages/home_controller.dart';
-import 'package:client/models/topic.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -30,15 +29,15 @@ class _HomePageState extends State<HomePage>
     return StreamBuilder(
       stream: this.hc.getTopics(),
       builder: (context, snapshot) {
+        print(snapshot);
         if (snapshot.hasData) {
           return ListView.builder(
             itemCount: snapshot.data.length,
             itemBuilder: (context, index) {
               var topic = snapshot.data[index];
-
               return ListTile(
-                title: Text("${topic.payload}"),
-              );
+                  title: Text("${topic.description}  ${topic.payload}"),
+                  leading: Icon(Icons.colorize));
             },
           );
         } else {

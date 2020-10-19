@@ -6,6 +6,6 @@ class TopicRepository {
   TopicRepository({this.firestore});
 
   Stream<QuerySnapshot> getTopics() {
-    return firestore.collection('temperatura').snapshots();
+    return firestore.collection('topics').orderBy('insertedAt', descending: true).snapshots();
   }
 }

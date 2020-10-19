@@ -9,10 +9,11 @@ class GetTopicService {
 
   Stream<List<Topic>> execute() {
     Stream<QuerySnapshot> tpcSnapshots = tpcRepository.getTopics();
-    
-    return tpcSnapshots.map((qShot) => qShot.docs.map(
-        (item) => Topic(payload: item['payload'])
-      ).toList()
-    );
+    return tpcSnapshots.map((qShot) => qShot.docs
+        .map((item) => Topic(
+            payload: item['payload'],
+            description: item['description'],
+            insertedAt: item['insertedAt'].toDate()))
+        .toList());
   }
 }
